@@ -65,7 +65,7 @@
   <div class="breadcrumbs"><a href="../../../../index.html">skiko</a><span class="delimiter">/</span><a href="../../index.html">org.jetbrains.skia</a><span class="delimiter">/</span><a href="../index.html">VulkanMemoryAllocator</a><span class="delimiter">/</span><span class="current">BufferUsage</span></div>
   <div class="cover ">
     <h1 class="cover"><span>Buffer</span><wbr></wbr><span><span>Usage</span></span></h1>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">enum </span><a href="index.html">BufferUsage</a> : <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-enum/index.html">Enum</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="index.html">VulkanMemoryAllocator.BufferUsage</a><span class="token operator">&gt; </span></div><p class="paragraph">Describes how Skia intends to use a buffer allocation.</p></div></div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><span class="token keyword">enum </span><a href="index.html">BufferUsage</a> : <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-enum/index.html">Enum</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="index.html">VulkanMemoryAllocator.BufferUsage</a><span class="token operator">&gt; </span></div><p class="paragraph">Describes how Skia intends to use a buffer allocation.</p><p class="paragraph">This may or may not be acknowledged by the underlying allocator implementation.</p></div></div>
   </div>
   <div class="tabbedcontent">
     <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button><button class="section-tab" data-togglable="ENTRY">Entries</button></div>
@@ -82,7 +82,7 @@
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><div class="block"><a href="-g-p-u_-o-n-l-y/index.html">GPU_ONLY</a></div></div><div class="brief "><p class="paragraph">Accessed only on the GPU. This is always device local.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><div class="block"><a href="-g-p-u_-o-n-l-y/index.html">GPU_ONLY</a></div></div><div class="brief "><p class="paragraph">GPU-only memory.</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -97,7 +97,7 @@
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><div class="block"><a href="-c-p-u_-w-r-i-t-e-s_-g-p-u_-r-e-a-d-s/index.html">CPU_WRITES_GPU_READS</a></div></div><div class="brief "><p class="paragraph">Frequently updated by the CPU, read by the GPU.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><div class="block"><a href="-c-p-u_-w-r-i-t-e-s_-g-p-u_-r-e-a-d-s/index.html">CPU_WRITES_GPU_READS</a></div></div><div class="brief "><p class="paragraph">CPU-written, GPU-read memory.</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -112,7 +112,7 @@
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><div class="block"><a href="-t-r-a-n-s-f-e-r-s_-f-r-o-m_-c-p-u_-t-o_-g-p-u/index.html">TRANSFERS_FROM_CPU_TO_GPU</a></div></div><div class="brief "><p class="paragraph">Staging buffer for CPU-to-GPU transfers. Must be host-visible and host-coherent.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><div class="block"><a href="-t-r-a-n-s-f-e-r-s_-f-r-o-m_-c-p-u_-t-o_-g-p-u/index.html">TRANSFERS_FROM_CPU_TO_GPU</a></div></div><div class="brief "><p class="paragraph">CPU-to-GPU transfer staging memory.</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -127,7 +127,7 @@
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><div class="block"><a href="-t-r-a-n-s-f-e-r-s_-f-r-o-m_-g-p-u_-t-o_-c-p-u/index.html">TRANSFERS_FROM_GPU_TO_CPU</a></div></div><div class="brief "><p class="paragraph">Buffer written by the GPU and read back on the CPU. Must be host-visible.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":dokkaHtml/commonMain"><div class="symbol monospace"><div class="block"><a href="-t-r-a-n-s-f-e-r-s_-f-r-o-m_-g-p-u_-t-o_-c-p-u/index.html">TRANSFERS_FROM_GPU_TO_CPU</a></div></div><div class="brief "><p class="paragraph">GPU-to-CPU transfer memory.</p></div></div></div>
                 </div>
               </div>
             </div>
