@@ -1,0 +1,262 @@
+name: Publish to Polyfrost
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g. 0.8.0)'
+        required: true
+      release:
+        description: 'Publish as release (not snapshot)'
+        required: false
+        type: boolean
+        default: true
+  push:
+    tags:
+      - 'v*'
+
+concurrency:
+  group: publish-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  POLYFROST_REPO_USERNAME: ${{ secrets.POLYFROST_REPO_USERNAME }}
+  POLYFROST_REPO_PASSWORD: ${{ secrets.POLYFROST_REPO_PASSWORD }}
+
+jobs:
+  resolve-version:
+    name: 'Resolve Version'
+    runs-on: ubuntu-24.04
+    outputs:
+      deploy_version: ${{ steps.version.outputs.deploy_version }}
+      deploy_release: ${{ steps.version.outputs.deploy_release }}
+    steps:
+      - name: 'Set version'
+        id: version
+        shell: bash
+        run: |
+          if [[ "${{ github.ref_type }}" == "tag" ]]; then
+            echo "deploy_version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+            echo "deploy_release=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "deploy_version=${{ inputs.version }}" >> "$GITHUB_OUTPUT"
+            echo "deploy_release=${{ inputs.release }}" >> "$GITHUB_OUTPUT"
+          fi
+
+  docker-publish:
+    name: 'Build Docker Images'
+    needs: resolve-version
+    uses: ./.github/workflows/docker-publish.yml
+    with:
+      publish: true
+
+  Android:
+    name: 'Android'
+    runs-on: ubuntu-24.04
+    needs: [resolve-version, docker-publish]
+    steps:
+      - uses: actions/checkout@v4
+        name: 'Check out code'
+
+      - uses: ./.github/actions/setup-prerequisites
+        name: 'Setup Prerequisites'
+
+      - uses: ./.github/actions/docker-skiko-run
+        name: 'Publish to Polyfrost'
+        env:
+          POLYFROST_REPO_USERNAME: ${{ secrets.POLYFROST_REPO_USERNAME }}
+          POLYFROST_REPO_PASSWORD: ${{ secrets.POLYFROST_REPO_PASSWORD }}
+        with:
+          image_name: linux-compat
+          command: |
+            ./gradlew --no-daemon --stacktrace \
+              -Pdeploy.version=${{ needs.resolve-version.outputs.deploy_version }} \
+              -Pdeploy.release=${{ needs.resolve-version.outputs.deploy_release }} \
+              -Pskiko.android.enabled=true \
+              :skiko:publishToPolyfrostRepo
+
+  Web:
+    name: 'Web'
+    runs-on: ubuntu-24.04
+    needs: [resolve-version, docker-publish]
+    steps:
+      - uses: actions/checkout@v4
+        name: 'Check out code'
+
+      - uses: ./.github/actions/setup-prerequisites
+        name: 'Setup Prerequisites'
+
+      - uses: ./.github/actions/docker-skiko-run
+        name: 'Publish to Polyfrost'
+        env:
+          POLYFROST_REPO_USERNAME: ${{ secrets.POLYFROST_REPO_USERNAME }}
+          POLYFROST_REPO_PASSWORD: ${{ secrets.POLYFROST_REPO_PASSWORD }}
+        with:
+          image_name: linux-emscripten-amd64
+          command: |
+            ./gradlew --no-daemon --stacktrace \
+              -Pdeploy.version=${{ needs.resolve-version.outputs.deploy_version }} \
+              -Pdeploy.release=${{ needs.resolve-version.outputs.deploy_release }} \
+              -Pskiko.wasm.enabled=true \
+              :skiko:publishToPolyfrostRepo
+
+  Linux:
+    name: 'Linux x64'
+    runs-on: ubuntu-24.04
+    needs: [resolve-version, docker-publish]
+    steps:
+      - uses: actions/checkout@v4
+        name: 'Check out code'
+
+      - uses: ./.github/actions/setup-prerequisites
+        name: 'Setup Prerequisites'
+
+      - uses: ./.github/actions/docker-skiko-run
+        name: 'Publish AWT x64'
+        env:
+          POLYFROST_REPO_USERNAME: ${{ secrets.POLYFROST_REPO_USERNAME }}
+          POLYFROST_REPO_PASSWORD: ${{ secrets.POLYFROST_REPO_PASSWORD }}
+        with:
+          image_name: linux-compat
+          command: |
+            ./gradlew --no-daemon --stacktrace \
+              -Pdeploy.version=${{ needs.resolve-version.outputs.deploy_version }} \
+              -Pdeploy.release=${{ needs.resolve-version.outputs.deploy_release }} \
+              -Pskiko.native.enabled=true \
+              -Pskiko.awt.enabled=true \
+              -Pskiko.arch=x64 \
+              :skiko:publishToPolyfrostRepo
+
+      - uses: ./.github/actions/docker-skiko-run
+        name: 'Publish Native'
+        env:
+          POLYFROST_REPO_USERNAME: ${{ secrets.POLYFROST_REPO_USERNAME }}
+          POLYFROST_REPO_PASSWORD: ${{ secrets.POLYFROST_REPO_PASSWORD }}
+        with:
+          image_name: linux-amd64
+          command: |
+            ./gradlew --no-daemon --stacktrace \
+              -Pdeploy.version=${{ needs.resolve-version.outputs.deploy_version }} \
+              -Pdeploy.release=${{ needs.resolve-version.outputs.deploy_release }} \
+              -Pskiko.native.enabled=true \
+              -Pskiko.awt.enabled=false \
+              :skiko:publishLinuxArm64PublicationToPolyfrostRepoRepository \
+              :skiko:publishLinuxX64PublicationToPolyfrostRepoRepository
+
+  LinuxArm:
+    name: 'Linux arm64'
+    runs-on: ubuntu-24.04-arm
+    needs: [resolve-version, docker-publish]
+    steps:
+      - uses: actions/checkout@v4
+        name: 'Check out code'
+
+      - uses: ./.github/actions/setup-prerequisites
+        name: 'Setup Prerequisites'
+
+      - uses: ./.github/actions/docker-skiko-run
+        name: 'Publish AWT Runtime arm64'
+        env:
+          POLYFROST_REPO_USERNAME: ${{ secrets.POLYFROST_REPO_USERNAME }}
+          POLYFROST_REPO_PASSWORD: ${{ secrets.POLYFROST_REPO_PASSWORD }}
+        with:
+          image_name: linux-compat
+          command: |
+            ./gradlew --no-daemon --stacktrace \
+              -Pdeploy.version=${{ needs.resolve-version.outputs.deploy_version }} \
+              -Pdeploy.release=${{ needs.resolve-version.outputs.deploy_release }} \
+              -Pskiko.awt.enabled=true \
+              -Pskiko.arch=arm64 \
+              :skiko:publishSkikoJvmRuntimeLinuxArm64PublicationToPolyfrostRepoRepository
+
+  macOS:
+    name: 'macOS'
+    runs-on: macos-15
+    needs: [resolve-version, docker-publish]
+    steps:
+      - uses: actions/checkout@v4
+        name: 'Check out code'
+
+      - uses: actions/setup-java@v4
+        name: 'Setup JDK 21'
+        with:
+          java-version: '21'
+          distribution: 'corretto'
+
+      - uses: ./.github/actions/setup-prerequisites
+        name: 'Setup Prerequisites'
+
+      - shell: bash
+        name: 'Publish arm64'
+        env:
+          POLYFROST_REPO_USERNAME: ${{ secrets.POLYFROST_REPO_USERNAME }}
+          POLYFROST_REPO_PASSWORD: ${{ secrets.POLYFROST_REPO_PASSWORD }}
+        run: |
+          ./gradlew --no-daemon --stacktrace \
+            -Pdeploy.version=${{ needs.resolve-version.outputs.deploy_version }} \
+            -Pdeploy.release=${{ needs.resolve-version.outputs.deploy_release }} \
+            -Pskiko.native.enabled=true \
+            -Pskiko.awt.enabled=true \
+            -Pskiko.arch=arm64 \
+            :skiko:publishToPolyfrostRepo
+
+      - shell: bash
+        name: 'Publish AWT Runtime x64'
+        env:
+          POLYFROST_REPO_USERNAME: ${{ secrets.POLYFROST_REPO_USERNAME }}
+          POLYFROST_REPO_PASSWORD: ${{ secrets.POLYFROST_REPO_PASSWORD }}
+        run: |
+          ./gradlew --no-daemon --stacktrace \
+            -Pdeploy.version=${{ needs.resolve-version.outputs.deploy_version }} \
+            -Pdeploy.release=${{ needs.resolve-version.outputs.deploy_release }} \
+            -Pskiko.awt.enabled=true \
+            -Pskiko.arch=x64 \
+            :skiko:publishSkikoJvmRuntimeMacosX64PublicationToPolyfrostRepoRepository
+
+  Windows:
+    name: 'Windows'
+    runs-on: windows-2022
+    needs: [resolve-version, docker-publish]
+    steps:
+      - uses: actions/checkout@v4
+        name: 'Check out code'
+
+      - uses: microsoft/setup-msbuild@v1
+
+      - uses: ilammy/msvc-dev-cmd@v1
+
+      - uses: actions/setup-java@v4
+        name: 'Setup JDK 21'
+        with:
+          java-version: '21'
+          distribution: 'corretto'
+
+      - uses: ./.github/actions/setup-prerequisites
+        name: 'Setup Prerequisites'
+
+      - shell: bash
+        name: 'Publish x64'
+        env:
+          POLYFROST_REPO_USERNAME: ${{ secrets.POLYFROST_REPO_USERNAME }}
+          POLYFROST_REPO_PASSWORD: ${{ secrets.POLYFROST_REPO_PASSWORD }}
+        run: |
+          ./gradlew --no-daemon --stacktrace \
+            -Pdeploy.version=${{ needs.resolve-version.outputs.deploy_version }} \
+            -Pdeploy.release=${{ needs.resolve-version.outputs.deploy_release }} \
+            -Pskiko.native.enabled=true \
+            -Pskiko.awt.enabled=true \
+            -Pskiko.arch=x64 \
+            :skiko:publishToPolyfrostRepo
+
+      - shell: bash
+        name: 'Publish AWT Runtime arm64'
+        env:
+          POLYFROST_REPO_USERNAME: ${{ secrets.POLYFROST_REPO_USERNAME }}
+          POLYFROST_REPO_PASSWORD: ${{ secrets.POLYFROST_REPO_PASSWORD }}
+        run: |
+          ./gradlew --no-daemon --stacktrace \
+            -Pdeploy.version=${{ needs.resolve-version.outputs.deploy_version }} \
+            -Pdeploy.release=${{ needs.resolve-version.outputs.deploy_release }} \
+            -Pskiko.awt.enabled=true \
+            -Pskiko.arch=arm64 \
+            :skiko:publishSkikoJvmRuntimeWindowsArm64PublicationToPolyfrostRepoRepository

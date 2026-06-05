@@ -90,6 +90,16 @@ private fun SkikoPublishingContext.configurePublishingRepositories() {
                     password = skiko.composeRepoKey
                 }
             }
+            if (skiko.polyfrostRepoUserName.isNotEmpty() && skiko.polyfrostRepoKey.isNotEmpty()) {
+                maven {
+                    name = "PolyfrostRepo"
+                    url = project.uri(skiko.polyfrostRepoUrl)
+                    credentials {
+                        username = skiko.polyfrostRepoUserName
+                        password = skiko.polyfrostRepoKey
+                    }
+                }
+            }
         }
     }
 }

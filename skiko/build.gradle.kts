@@ -513,11 +513,13 @@ project.tasks.withType<KotlinJsCompile>().configureEach {
 
 tasks.findByName("publishSkikoWasmRuntimePublicationToComposeRepoRepository")
     ?.dependsOn("publishWasmJsPublicationToComposeRepoRepository")
+tasks.findByName("publishSkikoWasmRuntimePublicationToPolyfrostRepoRepository")
+    ?.dependsOn("publishWasmJsPublicationToPolyfrostRepoRepository")
 tasks.findByName("publishSkikoWasmRuntimePublicationToMavenLocal")
     ?.dependsOn("publishWasmJsPublicationToMavenLocal")
 
 skikoProjectContext.additionalRuntimeLibraries.forEach {
-    it.registerRuntimePublishTaskDependency(listOf("MavenLocal", "ComposeRepoRepository"))
+    it.registerRuntimePublishTaskDependency(listOf("MavenLocal", "ComposeRepoRepository", "PolyfrostRepoRepository"))
 }
 
 // Local Skia build tasks

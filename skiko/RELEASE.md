@@ -35,6 +35,18 @@ Set up environment variables `COMPOSE_REPO_USERNAME` and `COMPOSE_REPO_KEY`.
 ./gradlew publishToComposeRepo
 ```
 
+##### Publish to Polyfrost repo
+Set up environment variables `POLYFROST_REPO_USERNAME` and `POLYFROST_REPO_PASSWORD`.
+Releases are published to `https://repo.polyfrost.org/releases`, snapshots to `https://repo.polyfrost.org/snapshots`.
+Override the URL with `POLYFROST_REPO_URL` if needed.
+```bash
+./gradlew publishToPolyfrostRepo -Pdeploy.version=0.2.0 -Pdeploy.release=true
+```
+
+##### Publish via GitHub Actions
+1. Add repository secrets `POLYFROST_REPO_USERNAME` and `POLYFROST_REPO_PASSWORD`.
+2. Run the **Publish to Polyfrost** workflow manually, or push a `v*` tag (e.g. `v0.2.0`).
+
 ##### Publish to all repositories
 ```bash
 ./gradlew publish

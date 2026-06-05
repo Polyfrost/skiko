@@ -87,11 +87,17 @@ runs:
     - name: 'Run command in container'
       shell: bash
       run: |
+        PUBLISH_ENV=()
+        while IFS= read -r line; do
+          PUBLISH_ENV+=( -e "$line" )
+        done < <(env | grep -E '^(POLYFROST_|COMPOSE_REPO_|ORG_GRADLE_PROJECT_deploy\.)' || true)
+
         docker run --rm \
           -v "${{ github.workspace }}":/workspace \
           -v "${HOME}/.gradle":/gradle-cache \
           -v "${HOME}/.m2":/root/.m2 \
           -e GRADLE_USER_HOME=/gradle-cache \
+          "${PUBLISH_ENV[@]}" \
           -w /workspace/${{ inputs.working_directory }} \
           "ghcr.io/${{ steps.vars.outputs.image_namespace }}/${{ inputs.image_name }}:${{ steps.vars.outputs.tag }}" \
           bash -c '${{ steps.cmd.outputs.command }}'

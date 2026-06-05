@@ -220,6 +220,19 @@ class SkikoProperties(private val myProject: Project) {
     val composeRepoKey: String
         get() = System.getenv("COMPOSE_REPO_KEY") ?: ""
 
+    val polyfrostRepoUrl: String
+        get() = System.getenv("POLYFROST_REPO_URL") ?: if (isRelease) {
+            "https://repo.polyfrost.org/releases"
+        } else {
+            "https://repo.polyfrost.org/snapshots"
+        }
+
+    val polyfrostRepoUserName: String
+        get() = System.getenv("POLYFROST_REPO_USERNAME") ?: ""
+
+    val polyfrostRepoKey: String
+        get() = System.getenv("POLYFROST_REPO_PASSWORD") ?: ""
+
     val signHost: String?
         get() = System.getenv("JB_SIGN_HOST")
             ?: (myProject.findProperty("sign_host") as? String)
