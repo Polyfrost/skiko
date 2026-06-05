@@ -49,6 +49,9 @@ jobs:
     uses: ./.github/workflows/docker-publish.yml
     with:
       publish: true
+    permissions:
+      contents: read
+      packages: write
 
   Android:
     name: 'Android'
