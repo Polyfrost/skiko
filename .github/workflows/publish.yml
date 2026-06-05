@@ -115,22 +115,6 @@ jobs:
         name: 'Setup Prerequisites'
 
       - uses: ./.github/actions/docker-skiko-run
-        name: 'Publish AWT x64'
-        env:
-          POLYFROST_REPO_USERNAME: ${{ secrets.POLYFROST_REPO_USERNAME }}
-          POLYFROST_REPO_PASSWORD: ${{ secrets.POLYFROST_REPO_PASSWORD }}
-        with:
-          image_name: linux-compat
-          command: |
-            ./gradlew --no-daemon --stacktrace \
-              -Pdeploy.version=${{ needs.resolve-version.outputs.deploy_version }} \
-              -Pdeploy.release=${{ needs.resolve-version.outputs.deploy_release }} \
-              -Pskiko.native.enabled=true \
-              -Pskiko.awt.enabled=true \
-              -Pskiko.arch=x64 \
-              :skiko:publishToPolyfrostRepo
-
-      - uses: ./.github/actions/docker-skiko-run
         name: 'Publish Native'
         env:
           POLYFROST_REPO_USERNAME: ${{ secrets.POLYFROST_REPO_USERNAME }}
