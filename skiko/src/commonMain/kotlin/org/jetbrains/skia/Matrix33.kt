@@ -1,14 +1,11 @@
 package org.jetbrains.skia
 
-import kotlin.jvm.JvmInline
 import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.sin
 
-private const val radiansToDegrees = 180.0 / PI
-private const val tolerance = (1.0f / (1 shl 12)).toDouble()
-internal inline fun Float.toRadians(): Double = this.toDouble() * radiansToDegrees
+internal fun Float.toRadians(): Double = this.toDouble() / 180 * PI
 
 /**
  *
@@ -20,34 +17,20 @@ internal inline fun Float.toRadians(): Double = this.toDouble() * radiansToDegre
  * Matrix includes a hidden variable that classifies the type of matrix to
  * improve performance. Matrix is not thread safe unless getType() is called first.
  *
- * @param mat  9-element array of floats representing the matrix in row-major order
- *
- * <pre>`
- * | scaleX   skewX  transX |
- * |  skewY  scaleY  transY |
- * | persp0  persp1  persp2 |
-`</pre> *
- *
  * @see [https://fiddle.skia.org/c/@Matrix_063](https://fiddle.skia.org/c/@Matrix_063)
  */
-@JvmInline
-value class Matrix33 internal constructor(val mat: FloatArray) {
-
-    constructor(
-        m00: Float, m01: Float, m02: Float,
-        m10: Float, m11: Float, m12: Float,
-        m20: Float, m21: Float, m22: Float,
-    ) : this(
-        floatArrayOf(
-            m00, m01, m02,
-            m10, m11, m12,
-            m20, m21, m22,
-        )
-    )
-
-    init {
-        require(mat.size == 9) { "Expected 9 elements, got ${mat.size}" }
-    }
+class Matrix33(vararg mat: Float) {
+    /**
+     *
+     * Matrix33 elements are in row-major order.
+     *
+     * <pre>`
+     * | scaleX   skewX  transX |
+     * |  skewY  scaleY  transY |
+     * | persp0  persp1  persp2 |
+    `</pre> *
+     */
+    val mat: FloatArray
     fun makePreScale(sx: Float, sy: Float): Matrix33 {
         return Matrix33(
             mat[0] * sx,
@@ -117,8 +100,21 @@ value class Matrix33 internal constructor(val mat: FloatArray) {
         return Matrix44(mat[0], mat[1], 0f, mat[2], mat[3], mat[4], 0f, mat[5], 0f, 0f, 1f, 0f, mat[6], mat[7], 0f, mat[8])
     }
 
+    override fun equals(other: Any?): Boolean {
+        if (other === this) return true
+        if (other !is Matrix33) return false
+        return mat.contentEquals(other.mat)
+    }
+
+    override fun hashCode(): Int {
+        val PRIME = 59
+        var result = 1
+        result = result * PRIME + mat.contentHashCode()
+        return result
+    }
+
     override fun toString(): String {
-        return "Matrix33(mat=${mat.contentToString()})"
+        return "Matrix33(_mat=$mat)"
     }
 
     companion object {
@@ -196,7 +192,7 @@ value class Matrix33 internal constructor(val mat: FloatArray) {
             val rad = deg.toRadians()
             var sin = sin(rad)
             var cos = cos(rad)
-            val tolerance = tolerance
+            val tolerance = (1.0f / (1 shl 12)).toDouble()
             if (abs(sin) <= tolerance) sin = 0.0
             if (abs(cos) <= tolerance) cos = 0.0
             return Matrix33(
@@ -235,7 +231,7 @@ value class Matrix33 internal constructor(val mat: FloatArray) {
             val rad = deg.toRadians()
             var sin = sin(rad)
             var cos = cos(rad)
-            val tolerance = tolerance
+            val tolerance = (1.0f / (1 shl 12)).toDouble()
             if (abs(sin) <= tolerance) sin = 0.0
             if (abs(cos) <= tolerance) cos = 0.0
             return Matrix33(
@@ -268,5 +264,10 @@ value class Matrix33 internal constructor(val mat: FloatArray) {
         fun makeSkew(sx: Float, sy: Float): Matrix33 {
             return Matrix33(1f, sx, 0f, sy, 1f, 0f, 0f, 0f, 1f)
         }
+    }
+
+    init {
+        require(mat.size == 9) { "Expected 9 elements, got ${mat.size}" }
+        this.mat = mat
     }
 }

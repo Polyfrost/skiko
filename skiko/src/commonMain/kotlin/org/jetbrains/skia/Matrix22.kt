@@ -3,32 +3,31 @@ package org.jetbrains.skia
 import org.jetbrains.skia.impl.InteropPointer
 import org.jetbrains.skia.impl.InteropScope
 import org.jetbrains.skia.impl.withResult
-import kotlin.jvm.JvmInline
 
 /**
  * 2x2 matrix.
- * @param mat 4 elements in row-major order
  */
-@JvmInline
-value class Matrix22 internal constructor(val mat: FloatArray) {
-    constructor(
-        m00: Float, m01: Float,
-        m10: Float, m11: Float
-    ) : this(
-        floatArrayOf(
-            m00, m01,
-            m10, m11
-        )
-    )
-
+class Matrix22(vararg mat: Float) {
     /**
-     * The constructor parameters are in row-major order.
+     * Matrix elements are in row-major order.
      */
-    init {
-        require(mat.size == 4) { "Expected 4 elements, got ${mat.size}" }
+    val mat: FloatArray
+
+    override fun equals(other: Any?): Boolean {
+        if (other === this) return true
+        if (other !is Matrix22) return false
+        return mat.contentEquals(other.mat)
     }
+
+    override fun hashCode(): Int {
+        val PRIME = 59
+        var result = 1
+        result = result * PRIME + mat.contentHashCode()
+        return result
+    }
+
     override fun toString(): String {
-        return "Matrix22(mat=${mat.contentToString()})"
+        return "Matrix22(_mat=$mat)"
     }
 
     companion object {
@@ -36,7 +35,15 @@ value class Matrix22 internal constructor(val mat: FloatArray) {
 
         internal fun fromInteropPointer(block: InteropScope.(InteropPointer) -> Unit): Matrix22 {
             val result = withResult(FloatArray(4), block)
-            return Matrix22(result)
+            return Matrix22(*result)
         }
+    }
+
+    /**
+     * The constructor parameters are in row-major order.
+     */
+    init {
+        require(mat.size == 4) { "Expected 4 elements, got ${mat.size}" }
+        this.mat = mat
     }
 }
