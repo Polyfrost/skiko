@@ -7,10 +7,8 @@ import org.gradle.crypto.checksum.Checksum
 import org.jetbrains.compose.internal.publishing.MavenCentralProperties
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.dsl.JvmDefaultMode
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
-import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import tasks.configuration.*
@@ -505,10 +503,6 @@ tasks.withType<JavaCompile> {
     // Workaround to configure Java sources on Android (src/androidMain/java)
     targetCompatibility = JavaVersion.VERSION_11.toString()
     sourceCompatibility = JavaVersion.VERSION_11.toString()
-}
-
-tasks.withType<KotlinJvmCompile>().configureEach {
-    compilerOptions.jvmDefault.set(JvmDefaultMode.DISABLE)
 }
 
 project.tasks.withType<KotlinJsCompile>().configureEach {

@@ -4,10 +4,8 @@ import com.android.build.gradle.LibraryExtension
 import com.android.build.gradle.LibraryPlugin
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
-import org.jetbrains.kotlin.gradle.dsl.JvmDefaultMode
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
-import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
@@ -116,10 +114,6 @@ if (supportAndroid) {
 
 tasks.withType<KotlinNativeCompile>().configureEach {
     compilerOptions.freeCompilerArgs.add("-opt-in=kotlinx.cinterop.ExperimentalForeignApi")
-}
-
-tasks.withType<KotlinJvmCompile>().configureEach {
-    compilerOptions.jvmDefault.set(JvmDefaultMode.DISABLE)
 }
 
 tasks.withType<KotlinCompilationTask<*>>().configureEach {
