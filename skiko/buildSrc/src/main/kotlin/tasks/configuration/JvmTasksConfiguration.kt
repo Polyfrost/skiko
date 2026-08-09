@@ -305,6 +305,7 @@ fun SkikoProjectContext.createLinkJvmBindings(
                         "shcore.lib",
                         "Shlwapi.lib",
                         "user32.lib",
+                        "winmm.lib",
                     )
                 )
                 if (buildType == SkiaBuildType.DEBUG) add("dxgi.lib")
