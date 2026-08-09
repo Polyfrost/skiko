@@ -4,16 +4,15 @@ import org.gradle.api.Project
 import java.io.File
 
 enum class OS(
-    val id: String,
-    val clangFlags: Array<String>
+    val id: String
 ) {
-    Linux("linux", arrayOf()),
-    Android("android", arrayOf()),
-    Windows("windows", arrayOf()),
-    MacOS("macos", arrayOf("-mmacosx-version-min=11.0")),
-    Wasm("wasm", arrayOf()),
-    IOS("ios", arrayOf()),
-    TVOS("tvos", arrayOf())
+    Linux("linux"),
+    Android("android"),
+    Windows("windows"),
+    MacOS("macos"),
+    Wasm("wasm"),
+    IOS("ios"),
+    TVOS("tvos")
     ;
 
     val isWindows
@@ -24,6 +23,11 @@ enum class OS(
 
     fun idWithSuffix(isUikitSim: Boolean = false): String {
         return id + if (isUikitSim) "Sim" else ""
+    }
+
+    fun clangFlags(arch: Arch): Array<String> = when (this) {
+        MacOS -> arrayOf("-mmacosx-version-min=" + if (arch == Arch.Arm64) "11.0" else "10.14")
+        else -> emptyArray()
     }
 }
 

@@ -77,7 +77,7 @@ fun SkikoProjectContext.createCompileJvmBindingsTask(
             includeHeadersNonRecursive(jdkHome.resolve("include/darwin"))
             osFlags = arrayOf(
                 *project.appleMacOsSdkFlags().toTypedArray(),
-                *targetOs.clangFlags,
+                *targetOs.clangFlags(targetArch),
                 *buildType.clangFlags,
                 "-arch", if (targetArch == Arch.Arm64) "arm64" else "x86_64",
                 "-fPIC",
@@ -211,7 +211,7 @@ fun SkikoProjectContext.createObjcCompileTask(
             "-fobjc-arc",
             "-arch", if (arch == Arch.Arm64) "arm64" else "x86_64",
             *project.appleMacOsSdkFlags().toTypedArray(),
-            *os.clangFlags,
+            *os.clangFlags(arch),
             *buildType.clangFlags,
             *skiaPreprocessorFlags(os, buildType),
             "-fPIC"
@@ -254,7 +254,7 @@ fun SkikoProjectContext.createLinkJvmBindings(
                 include("**/*.o")
             }
             osFlags = arrayOf(
-                *targetOs.clangFlags,
+                *targetOs.clangFlags(targetArch),
                 "-arch", if (targetArch == Arch.Arm64) "arm64" else "x86_64",
                 "-shared",
                 "-dead_strip",

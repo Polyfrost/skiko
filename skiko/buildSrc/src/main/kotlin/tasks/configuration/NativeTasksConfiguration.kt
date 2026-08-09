@@ -120,6 +120,7 @@ fun SkikoProjectContext.compileNativeBridgesTask(
                 compiler.set(project.appleToolchainExecutableOrDefault("clang++", compiler.get()))
                 flags.set(listOf(
                     *project.appleMacOsSdkFlags().toTypedArray(),
+                    *os.clangFlags(arch),
                     *buildType.clangFlags,
                     *skiaPreprocessorFlags(OS.MacOS, buildType),
                     when(arch) {
