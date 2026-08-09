@@ -81,7 +81,13 @@ val coreDependencies: SkikoDependencyScope.() -> Unit = {
             }
 
             windows {
-                    staticSkiaLibs("d3d12allocator")
+                    staticSkiaLibs(
+                        "d3d12allocator",
+                        "raw_ptr",
+                        "allocator_core",
+                        "allocator_base",
+                        "allocator_shim",
+                    )
             }
 
             linux {
