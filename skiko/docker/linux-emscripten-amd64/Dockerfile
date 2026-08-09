@@ -12,7 +12,7 @@ RUN apt update -y && \
 ENV EMSDK_DIR=/usr/emsdk
 ENV EMSDK_VER=4.0.7
 ENV PATH=$EMSDK_DIR/upstream/emscripten:$PATH
-RUN git clone https://github.com/emscripten-core/emsdk.git $EMSDK_DIR && \
+RUN git clone --depth 1 --branch $EMSDK_VER https://github.com/emscripten-core/emsdk.git $EMSDK_DIR && \
     $EMSDK_DIR/emsdk install $EMSDK_VER && \
     $EMSDK_DIR/emsdk activate $EMSDK_VER
 
