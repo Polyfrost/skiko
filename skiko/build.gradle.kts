@@ -94,6 +94,7 @@ val coreDependencies: SkikoDependencyScope.() -> Unit = {
                 // Hack to fix problem with linker not always finding certain declarations.
                 directStaticSkiaLibs(
                     "sksg",
+                    "skresources",
                     "skia",
                     "skia_ganesh_ext",
                     "skunicode_core",
@@ -101,6 +102,7 @@ val coreDependencies: SkikoDependencyScope.() -> Unit = {
                     "skshaper",
                     "jsonreader"
                 )
+                linkFlags("-Wl,--exclude-libs,ALL")
                 dynamicSystemLibs("GL", "X11", "fontconfig")
                 arm64 { dynamicSystemLibs("EGL") }
             }
