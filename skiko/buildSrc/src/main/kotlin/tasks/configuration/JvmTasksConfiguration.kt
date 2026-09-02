@@ -387,7 +387,9 @@ fun SkikoProjectContext.createLinkJvmBindings(
         OS.Android -> {
             val androidFlags = mutableListOf(
                 "-shared",
-                "-static-libstdc++",
+                // No -static-libstdc++: JVM-hosting Android launchers (PojavLauncher/Zalith/
+                // Amethyst) stage libc++_shared.so in their runtime and expect every loaded
+                // .so to share that STL. The NDK clang driver links libc++_shared by default.
                 "-llog",
                 "-landroid",
                 "-latomic",

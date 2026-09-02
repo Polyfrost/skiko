@@ -129,8 +129,9 @@ fun skiaPreprocessorFlags(os: OS, buildType: SkiaBuildType): Array<String> {
             "-sSUPPORT_LONGJMP=wasm"
         )
         OS.Android -> listOf(
-            "-DSK_BUILD_FOR_ANDROID",
-            "-DSK_VULKAN"
+            // No SK_VULKAN: skia is built with skia_use_vulkan=false for Android, so the
+            // Vulkan-guarded bindings would reference symbols that are not in the archives.
+            "-DSK_BUILD_FOR_ANDROID"
         )
     }
 

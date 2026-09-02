@@ -6,7 +6,7 @@
 
 #include "SkColorSpace.h"
 #include "SkSurface.h"
-#include "src/core/SkAutoMalloc.h"
+#include "src/base/SkAutoMalloc.h"
 #include "interop.hh"
 
 class SoftwareDevice
