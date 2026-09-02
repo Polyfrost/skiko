@@ -123,6 +123,10 @@ jobs:
     name: 'Docker Windows'
     runs-on: windows-2022
     needs: changes
+    # no publish job consumes this image (Windows publishing uses setup-msbuild on the
+    # runner directly), and the VS BuildTools layer currently trips a runner-side
+    # hcsshim::ImportLayer bug, so don't let it gate anything
+    continue-on-error: true
     if: |
       needs.changes.outputs.windows == 'true' ||
       needs.changes.outputs.docker_workflow == 'true'
