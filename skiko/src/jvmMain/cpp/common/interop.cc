@@ -5,7 +5,7 @@
 #include <jni.h>
 #include <memory>
 #include "shaper/interop.hh"
-#include "src/core/SkUTF.h"
+#include "src/base/SkUTF.h"
 #include "paragraph/interop.hh"
 #include "TextStyle.h"
 #include "include/core/SkBlendMode.h"
